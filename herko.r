@@ -1,6 +1,6 @@
 
 #read data
-data <- read.csv("Lonicera.txt", h=T,sep='\t',dec='.')
+data <- read.table("Lonicera.txt", h=T,sep='\t',dec='.')
 #explore data
 str(data)
 fix(data)
