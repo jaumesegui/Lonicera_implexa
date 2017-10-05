@@ -1,20 +1,53 @@
 
-data<-read.table('d:/cosas nuevas a guardar en H/Lonicera/Lonicera2012/paperherko/Herko.csv',sep=';',head=T)
+#read data
+data <- read.csv("Lonicera.txt", h=T,sep='\t',dec='.')
+#explore data
+str(data)
+fix(data)
+data[1:5,]
+summary(data)
+hist(data$Longestigma)
+hist(data$styleexertion)
+hist(data$herkoRela,breaks=20)
+plot(data$herkoRela,data$Longestigma)
+plot(data$Longestigma)
 
-head(data)
-
-names(data)
-
-
-data$population<-factor(data$population)
-data$plantID<-factor(data$plantID)
-data$infloID<-factor(data$infloID)
-data$posicionestam<-factor(data$posicionestam)
+#Distribuci�n de la herkogamia entre individuos, y entre poblaciones
+dev.new(height=20,width=20)
+boxplot(data$herkoRela~data$plantID)
+boxplot(data$herkoRela~data$population,ylim=c(-12,10))
+boxplot(data$herkoRela~data$plantID:data$population)
 
 
-class (data$longcor)
-data$longcor<-as.numeric(data$longcor)
+#preliminar analysis
 
+m<-lm(data$herkoRela~data$population)
+summary(m)
+library(lme4)
+glm1<-lmer(herkoRela~population+(1|plantID/infloID),na.action=na.omit,data=data)
+glm1<-lmer(herkoRela~population+(1|plantID),na.action=na.omit,data=data)
+summary(glm1)
+plot(glm1)
+confint(glm1)
+library(effects)
+plot(allEffects(glm1))
+library(visreg)
+visreg(glm1,scale = "response")
+##Antes del modelo, mirar linearidad (distribución), residuos (que sean homogéneos, no en forma de embudo), como comprobarlos?
+
+hist(resid(glm1))
+library(MuMIn)
+library(DHARMa)#permite analizar los residuos
+r.squaredGLM(glm1)
+coef(mixed)
+##el modelo va mejor con la variable controlada
+##el summary nos da el SD del random, i de los residuos (del modelo entero)
+##tenemos una sola pendiente, un intercept medio, despues tengo un intercept
+##para cada random, y el summary me da la varianza entre esos intercepts
+library(sjPlot)
+sjp.lmer(glm1)
+sjp.lmer(glm1,type = "ri.slope")####recta para cada random
+sjp.lmer(glm1, type = "eff", show.ci = TRUE)##recta general del modelo
 
 library(nlme)
 M02 <- lme(herkoRela~ longcor*population+anchcor*population, random= ~1|plantID/infloID, na.action=na.omit, data=data)
