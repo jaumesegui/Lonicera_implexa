@@ -12,12 +12,43 @@ hist(data$herkoRela,breaks=20)
 plot(data$herkoRela,data$Longestigma)
 plot(data$Longestigma)
 
+##Subset de las poblaciones
+
+dataB<-subset(data,data$population=="B")
+dataE<-subset(data,data$population=="E")
+dataST<-subset(data,data$population=="ST")
+
+##Histograma distribución hercogamia por poblaciones
+dev.new(height=20,width=20)
+par(mfrow=c(1,3))
+hist(dataB$herkoRela,breaks=20,xlim = c(-20,14),
+     ylim = c(0,200), main = "Banyalbufar",xlab = "Herkogamy")
+abline(v = mean(dataB$herkoRela,na.rm = TRUE),
+       col = "black",
+       lwd = 2)
+hist(dataE$herkoRela,breaks=13,xlim = c(-20,14),
+     ylim = c(0,200), main = "Establiments",xlab = "Herkogamy")
+abline(v = mean(dataE$herkoRela,na.rm = TRUE),
+       col = "black",
+       lwd = 2)
+
+hist(dataST$herkoRela,breaks=20,xlim = c(-20,14),
+     ylim = c(0,200), main = "Son Tríes",xlab = "Herkogamy")
+abline(v = mean(dataST$herkoRela,na.rm = TRUE),
+       col = "black",
+       lwd = 2)
 #Distribución de la herkogamia entre individuos, y entre poblaciones
 dev.new(height=20,width=20)
 boxplot(data$herkoRela~data$plantID)
 boxplot(data$herkoRela~data$population,ylim=c(-12,10))
-boxplot(data$herkoRela~data$plantID:data$population)
 
+Order <- factor( data$herkoRela, levels = levels( data$herkoRela )[ order( levels( data$herkoRela ) ) ] )
+
+dev.new(height=20,width=20)
+boxplot(data$herkoRela~data$plantID)
+dev.new(height=20,width=20)
+boxplot(data$herkoRela~data$plantID:data$population,boxwex = 1)
+?boxplot
 
 #preliminar analysis
 
